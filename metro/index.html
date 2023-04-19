@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html ln="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Hugo 0.111.3">
+  <title>Hyderabad Metro Route Finder</title>
+  <link href="styles.css" rel="stylesheet">
+  <script src="Stations.js"></script>
+</head>
+<body>
+  <h1  style="text-align:center;">Hyderabad Metro Route Finder</h1>
+  <div class="container"></div>
+  <div class="box">
+    <div class="content">
+  
+  <label for="start-station">Start Station:</label>
+  <select id="start-station">
+    <!-- populate the dropdown with stations -->
+    <script>
+      for (let i = 0; i < stations.length; i++) {
+        document.write(`<option value="${i}">${stations[i]}</option>`);
+      }
+      
+    </script>
+  </select><br>
+  <label for="end-station">End  Station :</label>
+  <select id="end-station">
+    <!-- populate the dropdown with stations -->
+    <script>
+      for (let i = 0; i < stations.length; i++) {
+        document.write(`<option value="${i}">${stations[i]}</option>`);
+      }
+    </script>
+  </select><br>
+  <button type="submit" onclick="findRoute()">Find Route</button>
+  <br>
+  <p id="result" style="color:rgb(2, 48, 2); font-size: large;">   </p>
+</div>
+</div>
+ 
+<div class="container">
+  <script>
+    function findRoute() {
+      const start = parseInt(document.getElementById("start-station").value);
+      const end = parseInt(document.getElementById("end-station").value);
+      const path = bfs(adjacencyList, start, end);
+      if (path === null) {
+        document.getElementById("result").innerHTML = "Sorry, no route found.";
+      } else {
+        document.getElementById("result").innerHTML = `Shortest route: <br>`; // add a line break before the stations
+
+for (let i = 0; i < path.length; i++) {
+  document.getElementById("result").innerHTML += `${i + 1}. ${stations[path[i]]}<br>`; // add the number before each station
+}
+
+      }
+    }
+    
+    function bfs(graph, start, end) {
+      const queue = [start];
+      console.log("queue   is"+queue);
+      
+      const visited = new Set([start]);
+      console.log(visited);
+      const parent = Array(graph.length).fill(null);   
+      while (queue.length > 0) {
+       
+        const current = queue.shift();// removes the first element from an array and returns that removed element
+        console.log("queue length  is"+queue.length);
+        if (current === end) {
+          // build path from predecessor array
+          const path = [end];
+          console.log("path is"+path);
+          let p = parent[end];
+          console.log("parent[end]"+parent[end]);
+          console.log("p is "+p)
+          while (p !== null) {
+            path.unshift(p);//adding p from the left of the array i.e., starting place
+            p = parent[p];
+          }
+          console.log("final path is"+path);
+          return path;
+        }
+        console.log("graph is "+graph[current]);
+        for (const neighbor of graph[current]) {
+          if (!visited.has(neighbor)) {
+            queue.push(neighbor);
+            visited.add(neighbor);
+            parent[neighbor] = current;
+            console.log("parent is"+parent);
+          }
+          
+        }
+      }
+      return null;  // no path found
+    }
+  </script>
+</body>
+</html>
